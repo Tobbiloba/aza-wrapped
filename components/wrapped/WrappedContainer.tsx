@@ -217,6 +217,7 @@ export function WrappedContainer() {
   return (
     <div
       onClick={handleClick}
+      id="wrapped-container"
       className="fixed inset-0 overflow-hidden cursor-pointer select-none"
     >
       <ProgressBar current={currentSlide} total={totalSlides} />
