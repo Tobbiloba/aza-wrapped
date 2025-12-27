@@ -26,7 +26,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - Tailwind CSS
 - Framer Motion
 - Zustand
-- Google Gemini AI
+- Anthropic Claude AI
 
 ## Deploy on Vercel
 
