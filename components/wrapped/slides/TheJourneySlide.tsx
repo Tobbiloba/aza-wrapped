@@ -28,7 +28,7 @@ export function TheJourneySlide({ months, peakMonth, aiInsights }: TheJourneySli
   const headline = "MONTHLY MADNESS";
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle={headline} effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND SHAPE */}
       <motion.div
         initial={{ y: '100%' }}

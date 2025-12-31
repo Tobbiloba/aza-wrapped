@@ -41,7 +41,7 @@ export function YourSpotsSlide({ merchants, aiInsights }: YourSpotsSlideProps) {
   const mainInsight = getMerchantInsight(topMerchant.name, 0);
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="Your Top Spots" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BG SHAPE */}
       <motion.div
         initial={{ x: '-100%' }}

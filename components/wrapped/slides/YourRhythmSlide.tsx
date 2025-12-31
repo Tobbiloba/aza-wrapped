@@ -59,7 +59,7 @@ export function YourRhythmSlide({
     .sort((a, b) => b.amount - a.amount);
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="Your Rhythm" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND SHAPE */}
       <motion.div
         initial={{ x: '100%' }}

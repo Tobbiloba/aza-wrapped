@@ -33,7 +33,7 @@ export function OdogwuDaySlide({
   const fullDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="Biggest Spending Day" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND - DIAGONAL SPLIT */}
       <motion.div
         initial={{ y: '-100%' }}

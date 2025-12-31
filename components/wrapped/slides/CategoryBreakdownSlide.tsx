@@ -22,7 +22,7 @@ export function CategoryBreakdownSlide({ categories, aiInsights }: CategoryBreak
   const roast = (aiInsights?.roast || "YOUR MONEY HAS PRIORITIES. WE'RE NOT JUDGING... MUCH 👀").toUpperCase();
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle={headline} effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND SPLIT */}
       <motion.div
         initial={{ x: '-100%' }}

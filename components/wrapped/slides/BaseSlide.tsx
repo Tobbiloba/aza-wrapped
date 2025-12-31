@@ -1,17 +1,15 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 import { FloatingOrbs, PulseRings, MoneyRain } from '@/components/ui/AnimatedBackground';
 import { Sparkles } from '@/components/ui/Particles';
-import { ShareButton } from '@/components/ui/ShareButton';
 
 interface BaseSlideProps {
   children: ReactNode;
   gradient?: string;
   className?: string;
   effects?: ('orbs' | 'sparkles' | 'pulse' | 'money')[];
-  slideTitle?: string;
 }
 
 export function BaseSlide({
@@ -19,13 +17,10 @@ export function BaseSlide({
   gradient = 'bg-purple-600',
   className = '',
   effects = [],
-  slideTitle = 'Aza Wrapped',
 }: BaseSlideProps) {
-  const slideRef = useRef<HTMLDivElement>(null);
 
   return (
     <motion.div
-      ref={slideRef}
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -50 }}
@@ -47,11 +42,6 @@ export function BaseSlide({
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-2xl mx-auto">
         {children}
-      </div>
-
-      {/* Share Button - Fixed at bottom */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <ShareButton slideRef={slideRef} slideTitle={slideTitle} />
       </div>
     </motion.div>
   );

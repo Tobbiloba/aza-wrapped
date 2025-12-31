@@ -38,7 +38,7 @@ export function MoneyCircleSlide({
   }
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="Money Circle" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BG ELEMENT */}
       <motion.div
         initial={{ y: '100%' }}

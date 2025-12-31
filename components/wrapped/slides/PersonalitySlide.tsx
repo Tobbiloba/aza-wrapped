@@ -27,7 +27,7 @@ export function PersonalitySlide({ analysis, aiInsights }: PersonalitySlideProps
   const traits = aiInsights?.traits || fallbackRoast.traits;
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="Personality Reveal" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND SHAPE */}
       <motion.div
         initial={{ x: '-100%' }}

@@ -21,7 +21,7 @@ export function SummarySlide({ analysis, aiInsights }: SummarySlideProps) {
   const caption = (aiInsights?.caption || "MONEY COME, MONEY GO. AT LEAST WE HAD FUN!").toUpperCase();
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="The Final Reveal" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND SPLIT */}
       <motion.div
         initial={{ x: '100%' }}

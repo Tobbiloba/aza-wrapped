@@ -37,7 +37,7 @@ export function OverviewSlide({
   const reaction = (aiInsights?.reaction || getWittyComment()).toUpperCase();
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="Overview" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND SPLIT */}
       <motion.div
         initial={{ x: '100%' }}

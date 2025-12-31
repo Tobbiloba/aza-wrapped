@@ -321,7 +321,7 @@ export function IntroSlide({ periodStart, periodEnd, accountName, aiInsights }: 
                     (periodEnd.getMonth() - periodStart.getMonth()) + 1;
 
   return (
-    <BaseSlide gradient="bg-black" slideTitle="Intro" effects={[]}>
+    <BaseSlide gradient="bg-black" effects={[]}>
       {/* KINETIC BACKGROUND ELEMENT */}
       <motion.div
         initial={{ x: '-100%', rotate: -10 }}

@@ -10,13 +10,13 @@ export function CreditHeader() {
   const socialLinks = [
     {
       label: 'INSTAGRAM',
-      href: 'https://instagram.com/yourhandle', // Replace with your link
+      href: 'https://www.instagram.com/tobbi_loba?igsh=bXUybWxocXhxdjZw',
       icon: <Instagram className="w-3 h-3 sm:w-3.5 sm:h-3.5" />,
       color: 'hover:bg-[#FF00FE]',
     },
     {
       label: 'LINKEDIN',
-      href: 'https://linkedin.com/in/yourhandle', // Replace with your link
+      href: 'https://www.linkedin.com/in/oluwatobiloba-salau-356295216/',
       icon: <Linkedin className="w-3 h-3 sm:w-3.5 sm:h-3.5" />,
       color: 'hover:bg-[#0077B5]',
     },
