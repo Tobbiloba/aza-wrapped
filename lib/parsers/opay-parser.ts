@@ -11,9 +11,6 @@ import { parseAmount, parseDate, generateId, excelSerialDateToJSDate } from '@/l
  * Parse OPay statement from rows (works with both CSV and XLSX)
  */
 export function parseOpayStatement(rows: string[][]): ParsedStatement {
-  console.log('[PARSER] Starting to parse statement. Total rows:', rows.length);
-  console.log('[PARSER] First 20 rows sample:', rows.slice(0, 20).map((r, i) => `Row ${i}: [${r?.slice(0, 8).join(', ')}]`));
-
   // Extract metadata from rows 1-6
   const metadata = extractMetadata(rows);
 
@@ -35,7 +32,6 @@ export function parseOpayStatement(rows: string[][]): ParsedStatement {
   let columnMapping: { date: number; description: number; debit: number; credit: number; balance: number; channel: number; reference: number } | null = null;
 
   // Try to find header row by looking for transaction table headers
-  console.log('[PARSER] Searching for header row...');
   for (let i = 0; i < Math.min(rows.length, 50); i++) {
     const row = rows[i];
     if (!row || row.length < 5) continue; // Transaction headers should have at least 5 columns
@@ -67,16 +63,12 @@ export function parseOpayStatement(rows: string[][]): ParsedStatement {
     );
 
     if (hasStrongHeader || (hasMultipleKeywords && rowText.includes('date'))) {
-      console.log(`[PARSER] Found potential header at row ${i}:`, row.slice(0, 10));
       // Try to map columns - this should find the actual transaction columns
       const mapping = detectColumnMapping(row);
       if (mapping && mapping.date >= 0) {
-        console.log(`[PARSER] Successfully mapped columns at row ${i}:`, mapping);
-      headerRowIndex = i;
+        headerRowIndex = i;
         columnMapping = mapping;
-      break;
-      } else {
-        console.log(`[PARSER] Header pattern found but column mapping failed at row ${i}`);
+        break;
       }
     }
   }
@@ -85,7 +77,6 @@ export function parseOpayStatement(rows: string[][]): ParsedStatement {
   let transactionStartRow = headerRowIndex >= 0 ? headerRowIndex + 1 : 0;
 
   if (headerRowIndex === -1) {
-    console.log('[PARSER] Header not found by pattern, trying data-based detection...');
     for (let i = 0; i < Math.min(rows.length, 50); i++) {
       const row = rows[i];
       if (!row || row.length < 3) continue;
@@ -94,17 +85,11 @@ export function parseOpayStatement(rows: string[][]): ParsedStatement {
       const firstCell = row[0]?.trim() || '';
       const looksLikeDate = isDateLike(firstCell);
       
-      if (i < 10) {
-        console.log(`[PARSER] Row ${i}, first cell: "${firstCell}", isDateLike: ${looksLikeDate}, row.length: ${row.length}`);
-      }
-      
       if (looksLikeDate && row.length >= 5) {
-        console.log(`[PARSER] Found date-like value at row ${i}: "${firstCell}", checking for header...`);
         // Check if previous row might be a header
         if (i > 0) {
           const prevMapping = detectColumnMapping(rows[i - 1]);
           if (prevMapping) {
-            console.log(`[PARSER] Found header at row ${i-1}, mapping:`, prevMapping);
             headerRowIndex = i - 1;
             columnMapping = prevMapping;
             transactionStartRow = i;
@@ -115,7 +100,6 @@ export function parseOpayStatement(rows: string[][]): ParsedStatement {
         // This looks like the first data row - use inferred mapping
         columnMapping = detectColumnMappingFromData(row) || getDefaultColumnMapping(row.length);
         if (columnMapping) {
-          console.log(`[PARSER] Using inferred mapping from row ${i}:`, columnMapping);
           headerRowIndex = i - 1; // Set to row before data starts
           transactionStartRow = i;
           break;
@@ -131,8 +115,6 @@ export function parseOpayStatement(rows: string[][]): ParsedStatement {
     console.error('[PARSER] Sample row structure:', sampleRows.map((r, i) => `Row ${i}: ${r?.slice(0, 10).join(' | ')}`));
     throw new Error(`Could not find transaction header row. File may be in an unsupported format.`);
   }
-
-  console.log(`[PARSER] Starting to parse transactions from row ${transactionStartRow} with mapping:`, columnMapping);
 
   // Parse transactions starting from transaction start row
   const transactions: Transaction[] = [];
@@ -166,23 +148,10 @@ export function parseOpayStatement(rows: string[][]): ParsedStatement {
     if (transaction) {
       transactions.push(transaction);
       parsedCount++;
-      if (parsedCount <= 3) {
-        console.log(`[PARSER] Parsed transaction ${parsedCount}:`, {
-          date: transaction.date,
-          description: transaction.description?.substring(0, 50),
-          amount: transaction.amount,
-          type: transaction.type
-        });
-      }
     } else {
       skippedCount++;
-      if (skippedCount <= 5) {
-        console.log(`[PARSER] Skipped row ${i} (parseTransactionRow returned null):`, row.slice(0, 8));
-      }
     }
   }
-
-  console.log(`[PARSER] Parsing complete. Parsed: ${parsedCount}, Skipped: ${skippedCount}, Total transactions: ${transactions.length}`);
 
   return { metadata, transactions };
 }
@@ -215,8 +184,6 @@ function extractMetadata(rows: string[][]): StatementMetadata {
     // Period
     if (rowText.includes('period')) {
       const periodStr = row[1] || row[3] || '';
-      console.log('[METADATA] Found period row:', row);
-      console.log('[METADATA] Period string:', periodStr);
       
       const periodMatch = periodStr.match(/(\d{1,2}\s+\w+\s+\d{4})\s*[-–]\s*(\d{1,2}\s+\w+\s+\d{4})/i);
       if (periodMatch) {
@@ -227,9 +194,10 @@ function extractMetadata(rows: string[][]): StatementMetadata {
         if (parsedStart.getFullYear() >= 1900 && parsedEnd.getFullYear() >= 1900 && parsedStart <= parsedEnd) {
           periodStart = parsedStart;
           periodEnd = parsedEnd;
-          console.log('[METADATA] Parsed period from regex:', periodStart, 'to', periodEnd);
         } else {
-          console.warn('[METADATA] Invalid dates from regex match:', parsedStart, parsedEnd);
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[METADATA] Invalid dates from regex match:', parsedStart, parsedEnd);
+          }
         }
       } else {
         // Check if dates are in separate cells (common in XLSX)
@@ -251,10 +219,7 @@ function extractMetadata(rows: string[][]): StatementMetadata {
               date1 <= date2) {
             periodStart = date1;
             periodEnd = date2;
-            console.log('[METADATA] Found period dates in separate cells:', cell1, '(', date1, ') to', cell2, '(', date2, ')');
             break;
-          } else {
-            console.log('[METADATA] Skipping cell pair (invalid dates):', cell1, '(', date1.getFullYear(), ') and', cell2, '(', date2.getFullYear(), ')');
           }
         }
       }
@@ -308,7 +273,6 @@ function extractMetadata(rows: string[][]): StatementMetadata {
  * Detect column mapping from header row
  */
 function detectColumnMapping(headerRow: string[]): { date: number; description: number; debit: number; credit: number; balance: number; channel: number; reference: number } | null {
-  console.log('[COLUMN_MAP] Detecting column mapping from header:', headerRow.slice(0, 10));
   const header = headerRow.join(' ').toLowerCase();
   
   // Find column indices for each field
@@ -400,14 +364,12 @@ function detectColumnMapping(headerRow: string[]): { date: number; description: 
   // We need at least date and description to be a valid transaction header
   // Also, date column should be one of the first few columns (not in the middle)
   if (dateCol === -1 || dateCol > 5) {
-    console.log('[COLUMN_MAP] No valid date column found (dateCol:', dateCol, '), returning null');
     return null;
   }
   
   // If we found date but it's clearly not a transaction date (like "Date Printed"), reject it
   const dateHeaderCell = (headerRow[dateCol] || '').toLowerCase().trim();
   if (dateHeaderCell.includes('printed') || dateHeaderCell.includes('statement')) {
-    console.log('[COLUMN_MAP] Date column is not a transaction date, returning null');
     return null;
   }
 
@@ -450,11 +412,6 @@ function detectColumnMapping(headerRow: string[]): { date: number; description: 
     channel: channelCol >= 0 ? channelCol : (balanceCol >= 0 ? balanceCol + 1 : (creditCol >= 0 ? creditCol + 2 : (dateCol >= 0 ? dateCol + 6 : 6))),
     reference: refCol >= 0 ? refCol : (channelCol >= 0 ? channelCol + 1 : (balanceCol >= 0 ? balanceCol + 2 : (dateCol >= 0 ? dateCol + 7 : 7))),
   };
-  
-  console.log('[COLUMN_MAP] Detected columns:', {
-    found: { dateCol, descCol, debitCol, creditCol, balanceCol, channelCol, refCol },
-    mapped: mapping
-  });
   
   return mapping;
 }

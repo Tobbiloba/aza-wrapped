@@ -18,8 +18,6 @@ export async function readFileAsText(file: File): Promise<string> {
  */
 export async function readXLSXAsRows(file: File): Promise<string[][]> {
   try {
-    console.log('[XLSX] Reading file:', file.name);
-    
     // Dynamic import of xlsx library - use namespace import
     const XLSX = await import('xlsx');
     
@@ -78,7 +76,6 @@ export async function readXLSXAsRows(file: File): Promise<string[][]> {
               raw: false, // Convert all values to strings
             }) as string[][];
             
-            console.log('[XLSX] Successfully parsed', rows.length, 'rows from sheet:', firstSheetName);
             resolve(rows);
           } finally {
             // Restore original console methods
@@ -86,7 +83,9 @@ export async function readXLSXAsRows(file: File): Promise<string[][]> {
             console.error = originalError;
           }
         } catch (error) {
-          console.error('[XLSX] Error parsing file:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[XLSX] Error parsing file:', error);
+          }
           reject(new Error(`Failed to parse XLSX file: ${error instanceof Error ? error.message : 'Unknown error'}`));
         }
       };
@@ -98,7 +97,9 @@ export async function readXLSXAsRows(file: File): Promise<string[][]> {
       reader.readAsArrayBuffer(file);
     });
   } catch (error) {
-    console.error('[XLSX] Error importing or initializing XLSX:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[XLSX] Error importing or initializing XLSX:', error);
+    }
     throw new Error(`Failed to load XLSX library: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }

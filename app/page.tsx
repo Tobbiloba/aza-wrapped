@@ -3,7 +3,16 @@
 import { motion } from 'motion/react';
 import Link from 'next/link';
 
-function StatCard({ label, value, color, x, y, rotate }: any) {
+interface StatCardProps {
+  label: string;
+  value: string;
+  color: string;
+  x: string;
+  y: string;
+  rotate: number;
+}
+
+function StatCard({ label, value, color, x, y, rotate }: StatCardProps) {
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0 }}

@@ -98,11 +98,12 @@ export default function UploadPage() {
             setAIInsights(insights);
             setProgress(90);
             setProgressMessage('Preparing your wrapped...');
-          } else {
-            console.warn('AI insights failed, continuing without them');
           }
         } catch (aiError) {
-          console.warn('AI insights failed:', aiError);
+          // AI failed but we can continue without it
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('AI insights failed:', aiError);
+          }
         }
 
         setProgress(100);

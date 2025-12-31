@@ -132,7 +132,9 @@ export function parseDate(dateStr: string): Date {
   }
   
   // If all else fails, return current date (fallback)
-  console.warn('[parseDate] Could not parse date:', dateStr, 'using current date as fallback');
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('[parseDate] Could not parse date:', dateStr, 'using current date as fallback');
+  }
   return new Date();
 }
 

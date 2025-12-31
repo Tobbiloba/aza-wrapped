@@ -2,9 +2,13 @@ import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { AnalysisSummary, AIInsights } from '@/types/insights';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+function getAnthropicClient() {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    throw new Error('ANTHROPIC_API_KEY is not configured');
+  }
+  return new Anthropic({ apiKey });
+}
 
 const SYSTEM_PROMPT = `You are a witty Nigerian financial commentator creating an "Aza Wrapped" experience (like Spotify Wrapped but for bank statements). Your job is to roast, hype, or comment on the user's spending habits in authentic Nigerian style.
 
@@ -134,13 +138,7 @@ export async function POST(request: NextRequest) {
   try {
     const summary: AnalysisSummary = await request.json();
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json(
-        { error: 'API key not configured' },
-        { status: 500 }
-      );
-    }
-
+    const anthropic = getAnthropicClient();
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 2000,
